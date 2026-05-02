@@ -55,17 +55,40 @@
 
 ## Upcoming
 
-### Day 3: Android Emulator + Hello World
-- Android Studio installed ✅
-- Java 21 (bundled in Android Studio) ✅
-- ANDROID_HOME + JAVA_HOME added to .zshrc ✅
-- TODO (manual): Open Android Studio → Setup Wizard → Create Pixel 8 API 35 emulator
-- Run `pnpm run android` — see Käte on the emulator screen
-- Take first screenshot (grant material!)
+---
 
-### Day 4-5: Polish + Real MWA test on Seeker
-- Test connect flow end-to-end
-- Error handling improvements
+## Day 3 — 2026-05-02: First Run on Android Emulator
+
+### ✅ Completed
+- [x] Android Studio installed + SDK downloaded
+- [x] Java 21 (bundled JDK) + ANDROID_HOME configured in .zshrc
+- [x] `expo run:android` — native APK built (9m 46s) and installed on Pixel 8 emulator
+- [x] **All 3 screens confirmed working on device:**
+  - Onboarding slide 1: "Welcome to Käte" / "Use Solana without SOL" ✅
+  - Dashboard: "Käte" logo, Gas Balance 12.50 USDC, action grid, Connected dApps ✅
+  - Send USDC: TO field, AMOUNT + USDC badge, Confirm & Send button ✅
+- [x] Screenshots saved to `screenshots/` (grant material + Twitter content)
+
+### 📸 Screenshots
+- `day3-first-launch.png` — Onboarding screen 1
+- `day3-onboarding-slide2.png` — Dashboard (scrolled)
+- `day3-onboarding-slide3.png` — Dashboard (full view)
+- `day3-send-screen.png` — Send USDC screen
+
+---
+
+## Upcoming
+
+### Day 4-5: Kora SDK Integration
+- Install `@solana/kora` TypeScript SDK
+- Connect app to local Kora node
+- Real gasless transaction flow (sign → relay → confirm)
+- Show real USDC balance from chain (replace mock data)
+
+### Day 6-7: Polish + Error Handling
+- Empty state (no wallet connected)
+- Transaction history
+- Real fee estimates from Kora
 
 ### Day 4-5: UI Screens
 - Onboarding (3 screens)
