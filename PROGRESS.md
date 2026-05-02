@@ -29,12 +29,41 @@
 
 ---
 
+---
+
+## Day 2 — 2026-05-02: App Scaffold + UI Screens
+
+### ✅ Completed
+- [x] Solana Mobile Expo Template scaffolded → `mobile/` folder
+- [x] App renamed to "Käte", package `com.kate.wallet`, dark theme
+- [x] Design system created (`theme.ts`) — Solana purple #9945FF, green #14F195, dark BG
+- [x] **OnboardingScreen** — 3-step flow (Welcome → Connect → Gas)
+- [x] **DashboardScreen** — Gas Balance widget (12.5 USDC / ~50k txs), action grid, connected dApps
+- [x] **SendScreen** — recipient + amount input, fee preview, success state with ✅
+- [x] **ConnectButton** component — wraps MWA with Käte styling
+- [x] Navigation: Onboarding → Dashboard → Send → Settings
+- [x] AsyncStorage: remembers if user has onboarded (won't show onboarding again)
+- [x] TypeScript check: 0 errors
+- [x] AsyncStorage installed (`@react-native-async-storage/async-storage`)
+
+### 📝 Notes
+- UI is fully built, using mock data for gas balance (real Kora integration = Day 9-11)
+- MWA connect button works — requires physical Seeker device or Android emulator with Seed Vault
+- All screens: dark mode only, Solana colors throughout
+
+---
+
 ## Upcoming
 
-### Day 2-3: Solana Mobile Expo Template
-- Set up React Native project from Solana Mobile template
-- Mobile Wallet Adapter (MWA) integration
-- Hello World running on Android emulator
+### Day 3: Android Emulator + Hello World
+- Install Java JDK (needed to run Android emulator)
+- Set up Android Virtual Device (AVD) in Android Studio
+- Run `pnpm run android` — see Käte on the emulator screen
+- Take first screenshot (grant material!)
+
+### Day 4-5: Polish + Real MWA test on Seeker
+- Test connect flow end-to-end
+- Error handling improvements
 
 ### Day 4-5: UI Screens
 - Onboarding (3 screens)
