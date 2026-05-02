@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,10 +11,9 @@ import { useNavigation } from "@react-navigation/native";
 import { Colors, Spacing, FontSize } from "../theme";
 import { useAuthorization } from "../utils/useAuthorization";
 import { ConnectButton } from "../components/connect-button/ConnectButton";
+import { getUsdcBalance } from "../services/kora";
 
-const MOCK_GAS_BALANCE = 12.5;
-const MOCK_TX_REMAINING = Math.floor((MOCK_GAS_BALANCE / 0.00025));
-
+const COST_PER_TX_USDC = 0.00025;
 const CONNECTED_DAPPS = [
   { name: "Jupiter", icon: "🪐", active: true },
   { name: "Drift", icon: "🌊", active: true },
@@ -23,16 +22,40 @@ const CONNECTED_DAPPS = [
 export function DashboardScreen() {
   const navigation = useNavigation<any>();
   const { selectedAccount } = useAuthorization();
+  const [gasBalance, setGasBalance] = useState<number | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const walletAddress = selectedAccount
-    ? `${selectedAccount.publicKey.toString().slice(0, 6)}...${selectedAccount.publicKey.toString().slice(-4)}`
+  const walletAddress = selectedAccount?.publicKey.toString() ?? null;
+  const shortAddress = walletAddress
+    ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
     : null;
 
-  const onRefresh = () => {
+  const loadBalance = useCallback(async () => {
+    if (!walletAddress) {
+      setGasBalance(null);
+      return;
+    }
+    try {
+      const bal = await getUsdcBalance(walletAddress);
+      setGasBalance(bal);
+    } catch {
+      setGasBalance(0);
+    }
+  }, [walletAddress]);
+
+  useEffect(() => {
+    loadBalance();
+  }, [loadBalance]);
+
+  const onRefresh = async () => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
+    await loadBalance();
+    setRefreshing(false);
   };
+
+  const displayBalance = gasBalance ?? 0;
+  const txRemaining = Math.floor(displayBalance / COST_PER_TX_USDC);
+  const balancePercent = Math.min((displayBalance / 50) * 100, 100);
 
   return (
     <ScrollView
@@ -57,16 +80,16 @@ export function DashboardScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Wallet address */}
-      {walletAddress ? (
+      {/* Wallet address or connect prompt */}
+      {shortAddress ? (
         <View style={styles.walletBadge}>
           <Text style={styles.walletDot}>●</Text>
-          <Text style={styles.walletAddress}>{walletAddress}</Text>
+          <Text style={styles.walletAddress}>{shortAddress}</Text>
         </View>
       ) : (
         <View style={styles.connectSection}>
           <Text style={styles.connectHint}>Connect your wallet to start</Text>
-          <ConnectButton />
+          <ConnectButton onConnected={loadBalance} />
         </View>
       )}
 
@@ -74,19 +97,18 @@ export function DashboardScreen() {
       <View style={styles.gasCard}>
         <Text style={styles.gasLabel}>Gas Balance</Text>
         <Text style={styles.gasAmount}>
-          {MOCK_GAS_BALANCE.toFixed(2)}{" "}
-          <Text style={styles.gasUnit}>USDC</Text>
+          {gasBalance === null && walletAddress
+            ? "Loading..."
+            : `${displayBalance.toFixed(2)} `}
+          {gasBalance !== null && (
+            <Text style={styles.gasUnit}>USDC</Text>
+          )}
         </Text>
         <View style={styles.gasBar}>
-          <View
-            style={[
-              styles.gasBarFill,
-              { width: `${Math.min((MOCK_GAS_BALANCE / 50) * 100, 100)}%` },
-            ]}
-          />
+          <View style={[styles.gasBarFill, { width: `${balancePercent}%` }]} />
         </View>
         <Text style={styles.gasTxCount}>
-          ⚡ ~{MOCK_TX_REMAINING.toLocaleString()} transactions remaining
+          ⚡ ~{txRemaining.toLocaleString()} transactions remaining
         </Text>
       </View>
 
@@ -96,26 +118,16 @@ export function DashboardScreen() {
           emoji="📤"
           label="Send USDC"
           onPress={() => navigation.navigate("Send", { token: "USDC" })}
+          disabled={!walletAddress}
         />
         <ActionButton
           emoji="🪙"
           label="Send Token"
           onPress={() => navigation.navigate("Send", { token: "Token" })}
+          disabled={!walletAddress}
         />
-        <ActionButton
-          emoji="🔄"
-          label="Swap"
-          onPress={() => {}}
-          disabled
-          comingSoon
-        />
-        <ActionButton
-          emoji="🌐"
-          label="dApps"
-          onPress={() => {}}
-          disabled
-          comingSoon
-        />
+        <ActionButton emoji="🔄" label="Swap" onPress={() => {}} disabled comingSoon />
+        <ActionButton emoji="🌐" label="dApps" onPress={() => {}} disabled comingSoon />
       </View>
 
       {/* Connected dApps */}
@@ -144,11 +156,7 @@ export function DashboardScreen() {
 }
 
 function ActionButton({
-  emoji,
-  label,
-  onPress,
-  disabled,
-  comingSoon,
+  emoji, label, onPress, disabled, comingSoon,
 }: {
   emoji: string;
   label: string;
@@ -172,31 +180,17 @@ function ActionButton({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  content: {
-    padding: Spacing.md,
-    paddingBottom: Spacing.xxl,
-  },
+  container: { flex: 1, backgroundColor: Colors.background },
+  content: { padding: Spacing.md, paddingBottom: Spacing.xxl },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: Spacing.md,
   },
-  logo: {
-    fontSize: FontSize.xl,
-    fontWeight: "800",
-    color: Colors.primary,
-  },
-  settingsButton: {
-    padding: Spacing.sm,
-  },
-  settingsIcon: {
-    fontSize: 22,
-  },
+  logo: { fontSize: FontSize.xl, fontWeight: "800", color: Colors.primary },
+  settingsButton: { padding: Spacing.sm },
+  settingsIcon: { fontSize: 22 },
   walletBadge: {
     flexDirection: "row",
     alignItems: "center",
@@ -208,23 +202,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     gap: 6,
   },
-  walletDot: {
-    color: Colors.accent,
-    fontSize: 10,
-  },
+  walletDot: { color: Colors.accent, fontSize: 10 },
   walletAddress: {
     color: Colors.textSecondary,
     fontSize: FontSize.sm,
     fontFamily: "monospace",
   },
-  connectSection: {
-    marginBottom: Spacing.lg,
-    gap: Spacing.sm,
-  },
-  connectHint: {
-    color: Colors.textSecondary,
-    fontSize: FontSize.sm,
-  },
+  connectSection: { marginBottom: Spacing.lg, gap: Spacing.sm },
+  connectHint: { color: Colors.textSecondary, fontSize: FontSize.sm },
   gasCard: {
     backgroundColor: Colors.card,
     borderRadius: 20,
@@ -245,12 +230,9 @@ const styles = StyleSheet.create({
     fontSize: FontSize.xxl,
     fontWeight: "800",
     marginBottom: Spacing.md,
+    minHeight: 48,
   },
-  gasUnit: {
-    color: Colors.accent,
-    fontSize: FontSize.xl,
-    fontWeight: "600",
-  },
+  gasUnit: { color: Colors.accent, fontSize: FontSize.xl, fontWeight: "600" },
   gasBar: {
     height: 6,
     backgroundColor: Colors.border,
@@ -258,15 +240,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     overflow: "hidden",
   },
-  gasBarFill: {
-    height: "100%",
-    backgroundColor: Colors.primary,
-    borderRadius: 3,
-  },
-  gasTxCount: {
-    color: Colors.textSecondary,
-    fontSize: FontSize.sm,
-  },
+  gasBarFill: { height: "100%", backgroundColor: Colors.primary, borderRadius: 3 },
+  gasTxCount: { color: Colors.textSecondary, fontSize: FontSize.sm },
   actions: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -285,20 +260,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 4,
   },
-  actionButtonDisabled: {
-    opacity: 0.4,
-  },
-  actionEmoji: {
-    fontSize: 28,
-  },
-  actionLabel: {
-    color: Colors.textPrimary,
-    fontSize: FontSize.sm,
-    fontWeight: "600",
-  },
-  actionLabelDisabled: {
-    color: Colors.textSecondary,
-  },
+  actionButtonDisabled: { opacity: 0.4 },
+  actionEmoji: { fontSize: 28 },
+  actionLabel: { color: Colors.textPrimary, fontSize: FontSize.sm, fontWeight: "600" },
+  actionLabelDisabled: { color: Colors.textSecondary },
   soon: {
     color: Colors.textSecondary,
     fontSize: 10,
@@ -307,9 +272,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 4,
   },
-  section: {
-    marginBottom: Spacing.lg,
-  },
+  section: { marginBottom: Spacing.lg },
   sectionTitle: {
     color: Colors.textSecondary,
     fontSize: FontSize.sm,
@@ -326,38 +289,18 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     gap: Spacing.sm,
   },
-  dappIcon: {
-    fontSize: 20,
-  },
-  dappName: {
-    color: Colors.textPrimary,
-    fontSize: FontSize.md,
-    fontWeight: "600",
-    flex: 1,
-  },
+  dappIcon: { fontSize: 20 },
+  dappName: { color: Colors.textPrimary, fontSize: FontSize.md, fontWeight: "600", flex: 1 },
   dappStatus: {
     backgroundColor: Colors.border,
     borderRadius: 8,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
   },
-  dappActive: {
-    backgroundColor: Colors.accent + "33",
-  },
-  dappStatusText: {
-    color: Colors.accent,
-    fontSize: FontSize.xs,
-    fontWeight: "600",
-  },
-  addDapp: {
-    padding: Spacing.md,
-    alignItems: "center",
-  },
-  addDappText: {
-    color: Colors.primary,
-    fontSize: FontSize.sm,
-    fontWeight: "600",
-  },
+  dappActive: { backgroundColor: Colors.accent + "33" },
+  dappStatusText: { color: Colors.accent, fontSize: FontSize.xs, fontWeight: "600" },
+  addDapp: { padding: Spacing.md, alignItems: "center" },
+  addDappText: { color: Colors.primary, fontSize: FontSize.sm, fontWeight: "600" },
   topUpButton: {
     backgroundColor: Colors.primary + "22",
     borderWidth: 1,
@@ -366,9 +309,5 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     alignItems: "center",
   },
-  topUpText: {
-    color: Colors.primary,
-    fontSize: FontSize.md,
-    fontWeight: "700",
-  },
+  topUpText: { color: Colors.primary, fontSize: FontSize.md, fontWeight: "700" },
 });
