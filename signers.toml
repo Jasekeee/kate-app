@@ -1,0 +1,12 @@
+# Kora signers config — devnet development
+# The fee payer is our local Solana keypair (7vkohTEiS8ZFc9z5QbwusoxdegxZrbuvfiP3JXZnhFXY)
+# Private key loaded from KORA_SIGNER_KEY environment variable
+
+[signer_pool]
+strategy = "round_robin"
+
+[[signers]]
+name = "kate-fee-payer"
+type = "memory"
+private_key_env = "KORA_SIGNER_KEY"
+weight = 1
