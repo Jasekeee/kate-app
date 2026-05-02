@@ -77,9 +77,48 @@
 
 ---
 
+## Day 4-5 — 2026-05-02: Kora Integration + App Polish
+
+### ✅ Completed
+- [x] `@solana/kora` SDK installed → removed (caused Metro bundler conflict with @solana/kit v2)
+- [x] Replaced with direct JSON-RPC `fetch` calls to Kora node — simpler, zero new deps
+- [x] `kora.ts` service: `buildGaslessTransfer`, `relaySignedTransaction`, `getUsdcBalance`
+- [x] `signers.toml` — correct array format with memory signer
+- [x] Kora node running locally on `localhost:8080`, `getConfig` verified ✅
+- [x] `start-kora.sh` — one-command startup script for future sessions
+- [x] `useGasBalance` hook — auto-refresh every 15s, exposed `refresh` callback
+- [x] DashboardScreen — uses hook, Loading... state, action buttons disabled pre-connect
+- [x] App running cleanly on emulator: 0.00 USDC (no wallet connected, correct)
+- [x] TypeScript: 0 errors throughout
+
+---
+
+## Day 6 — 2026-05-02: Landing Page
+
+### ✅ Completed
+- [x] `landing/index.html` — full landing page (hero, screenshots, how-it-works, features, waitlist)
+- [x] Solana design system (#9945FF / #14F195), dark theme matches app
+- [x] Screenshots embedded from GitHub repo
+- [x] `vercel.json` configured for static deploy
+- [x] Vercel CLI installed (v53.1.0)
+- [x] Committed and pushed to GitHub
+
+### 🔄 Pending
+- [ ] Run `cd landing && vercel --prod` to get live URL
+- [ ] Update grant applications with live URL
+
+---
+
 ## Upcoming
 
-### Day 4-5: Kora SDK Integration
+### Day 7-8: Grant Applications
+- Submit Solana Mobile Builder Grant ($10k)
+- Submit Superteam KZ Grant ($5k)
+- Twitter thread #1 (showing progress + screenshots)
+
+### Day 9-11: Real Mainnet Testing
+
+### Day 4-5: Kora SDK Integration (COMPLETED ABOVE)
 - Install `@solana/kora` TypeScript SDK
 - Connect app to local Kora node
 - Real gasless transaction flow (sign → relay → confirm)
