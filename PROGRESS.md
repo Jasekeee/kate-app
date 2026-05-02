@@ -56,8 +56,10 @@
 ## Upcoming
 
 ### Day 3: Android Emulator + Hello World
-- Install Java JDK (needed to run Android emulator)
-- Set up Android Virtual Device (AVD) in Android Studio
+- Android Studio installed ✅
+- Java 21 (bundled in Android Studio) ✅
+- ANDROID_HOME + JAVA_HOME added to .zshrc ✅
+- TODO (manual): Open Android Studio → Setup Wizard → Create Pixel 8 API 35 emulator
 - Run `pnpm run android` — see Käte on the emulator screen
 - Take first screenshot (grant material!)
 
