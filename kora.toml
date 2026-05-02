@@ -1,0 +1,27 @@
+# Kora configuration — devnet development
+# Used for local testing of Käte gasless transactions
+#
+# USDC devnet: 4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU
+# SPL Token program: TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA
+# System program: 11111111111111111111111111111111
+# ATA program: ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe1bRS
+
+[validation]
+max_allowed_lamports = 1000000
+max_signatures = 10
+allowed_programs = [
+    "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",   # SPL Token
+    "11111111111111111111111111111111",                  # System program
+    "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJe1bRS",   # Associated Token Account
+]
+allowed_tokens = [
+    "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",   # USDC devnet
+]
+allowed_spl_paid_tokens = [
+    "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",   # USDC devnet (users pay gas in this)
+]
+disallowed_accounts = []
+price_source = "Mock"
+
+[kora]
+rate_limit = 100

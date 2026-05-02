@@ -13,13 +13,14 @@
 - [x] CLAUDE.md committed (full project brief)
 - [x] PROGRESS.md created
 
-### 🔄 In Progress
-- [ ] Install Node.js (JavaScript runtime — needed to run the app)
-- [ ] Install pnpm (fast package manager — like an app store for code libraries)
-- [ ] Install Rust (programming language — needed for Solana tools)
-- [ ] Install Solana CLI (command-line tool to interact with Solana blockchain)
-- [ ] Install Kora CLI (command-line tool for gasless transaction infrastructure)
-- [ ] Run Kora node locally and verify it works
+### ✅ Also Completed
+- [x] Node.js v25.8.2 — already installed
+- [x] pnpm v10.33.2 — installed via official installer
+- [x] Rust 1.95.0 — installed via rustup
+- [x] Solana CLI 3.1.14 — installed via official installer
+- [x] Kora CLI 2.0.5 — installed via cargo (Rust package manager)
+- [x] kora.toml config file created (devnet, USDC as gas token, Mock price source)
+- [x] `kora config validate` — passed ✓
 
 ### 📝 Notes
 - Stack: React Native + Expo (mobile app framework) + Kora (gasless backend by Solana Foundation)
