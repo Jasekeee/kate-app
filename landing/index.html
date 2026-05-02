@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Käte — Use Solana without SOL</title>
+  <meta name="description" content="Käte is a mobile-native gasless Solana wallet. Pay transaction fees in USDC — no SOL required. Built for Solana Seeker." />
+  <meta property="og:title" content="Käte — Use Solana without SOL" />
+  <meta property="og:description" content="Pay transaction fees in USDC. No SOL required. Built on Kora by Solana Foundation." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/Jasekeee/kate-app/main/screenshots/day3-first-launch.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --purple: #9945FF;
+      --green: #14F195;
+      --bg: #0F0F0F;
+      --surface: #1A1A1A;
+      --card: #222222;
+      --border: #333333;
+      --text: #FFFFFF;
+      --muted: #AAAAAA;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    a { color: var(--purple); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+    .nav-logo { font-size: 22px; font-weight: 800; color: var(--purple); }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a { color: var(--muted); font-size: 14px; }
+    .btn-primary {
+      background: var(--purple);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; text-decoration: none; }
+    .btn-outline {
+      background: transparent;
+      color: var(--purple);
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      border: 1.5px solid var(--purple);
+      cursor: pointer;
+      display: inline-block;
+      transition: opacity 0.2s;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--purple) + "22";
+      background: rgba(153, 69, 255, 0.15);
+      color: var(--purple);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      border: 1px solid rgba(153, 69, 255, 0.3);
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .hero h1 span { color: var(--green); }
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto 36px;
+    }
+    .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* SCREENSHOT */
+    .screenshot-section {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding: 20px 24px 60px;
+      flex-wrap: wrap;
+    }
+    .phone-frame {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 32px;
+      overflow: hidden;
+      width: 200px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .phone-frame img { width: 100%; display: block; }
+
+    /* HOW IT WORKS */
+    .section { max-width: 900px; margin: 0 auto; padding: 60px 24px; }
+    .section-label {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+    .section h2 {
+      text-align: center;
+      font-size: clamp(24px, 4vw, 40px);
+      font-weight: 800;
+      margin-bottom: 48px;
+    }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      background: rgba(153, 69, 255, 0.15);
+      border: 1px solid rgba(153, 69, 255, 0.4);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--purple);
+      font-weight: 800;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    .step h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .step p { color: var(--muted); font-size: 14px; }
+
+    /* FEATURES */
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+    .feature {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+    }
+    .feature-icon { font-size: 32px; margin-bottom: 16px; }
+    .feature h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .feature p { color: var(--muted); font-size: 14px; }
+
+    /* BUILT ON */
+    .built-on {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto 60px;
+    }
+    .built-on-icon { font-size: 48px; flex-shrink: 0; }
+    .built-on h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+    .built-on p { color: var(--muted); font-size: 14px; }
+    .built-on a { color: var(--green); }
+
+    /* CTA */
+    .cta {
+      text-align: center;
+      padding: 80px 24px;
+      background: linear-gradient(180deg, var(--bg) 0%, rgba(153,69,255,0.05) 100%);
+    }
+    .cta h2 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; margin-bottom: 16px; }
+    .cta p { color: var(--muted); font-size: 16px; margin-bottom: 32px; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    footer p { color: var(--muted); font-size: 13px; }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-logo">Käte</span>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="https://github.com/Jasekeee/kate-app" target="_blank">GitHub</a>
+      <a href="#waitlist" class="btn-primary">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">🚀 Built for Solana Seeker · Powered by Kora</div>
+    <h1>Use Solana<br /><span>without SOL</span></h1>
+    <p>
+      Käte is a mobile-native gasless wallet for Solana. Deposit USDC once
+      and pay all your transaction fees in USDC — no SOL required, ever.
+    </p>
+    <div class="hero-buttons">
+      <a href="#waitlist" class="btn-primary">Join Waitlist</a>
+      <a href="https://github.com/Jasekeee/kate-app" target="_blank" class="btn-outline">View on GitHub</a>
+    </div>
+  </section>
+
+  <!-- SCREENSHOTS -->
+  <div class="screenshot-section">
+    <div class="phone-frame">
+      <img src="https://raw.githubusercontent.com/Jasekeee/kate-app/main/screenshots/day3-first-launch.png" alt="Käte onboarding" loading="lazy" />
+    </div>
+    <div class="phone-frame">
+      <img src="https://raw.githubusercontent.com/Jasekeee/kate-app/main/screenshots/day3-onboarding-slide3.png" alt="Käte dashboard" loading="lazy" />
+    </div>
+    <div class="phone-frame">
+      <img src="https://raw.githubusercontent.com/Jasekeee/kate-app/main/screenshots/day3-send-screen.png" alt="Käte send" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how">
+    <div class="section-label">How it works</div>
+    <h2>Three steps to gasless</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Connect your Seeker wallet</h3>
+        <p>Käte connects to your Seed Vault wallet via Mobile Wallet Adapter. Your keys never leave your device.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Deposit USDC for gas</h3>
+        <p>Add USDC to your Gas Balance. $1 USDC covers approximately 4,000 Solana transactions.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Use any Solana dApp</h3>
+        <p>Send, swap, and interact with any Solana app. Fees are deducted in USDC. No SOL ever needed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <div class="section-label">Features</div>
+    <h2>Built for real users</h2>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3>Gas Balance Widget</h3>
+        <p>See your USDC gas balance in real-time. Know exactly how many transactions you have left.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔗</div>
+        <h3>Mobile Wallet Adapter</h3>
+        <p>Native integration with Solana Seeker's Seed Vault. The only secure key management on Android.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🌍</div>
+        <h3>Made in Central Asia</h3>
+        <p>Built in Almaty, Kazakhstan. First Solana Mobile app from Central Asia. V2 will support Russian, Kazakh, and 3 more languages.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔓</div>
+        <h3>Open Source</h3>
+        <p>MIT licensed. First public mobile-MWA-Kora integration boilerplate for the Solana ecosystem.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILT ON KORA -->
+  <div class="section" style="padding-top:0">
+    <div class="built-on">
+      <div class="built-on-icon">⚙️</div>
+      <div>
+        <h3>Kora is the engine. Käte is the car.</h3>
+        <p>
+          Käte is built on <a href="https://github.com/solana-foundation/kora" target="_blank">Kora</a>,
+          Solana Foundation's official gasless transaction infrastructure. Kora is audited by Runtime Verification,
+          MIT licensed, and production-ready. We are the first mobile-native UI layer built on top of it.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WAITLIST -->
+  <section class="cta" id="waitlist">
+    <h2>Be the first to try Käte</h2>
+    <p>We're in beta. Join the waitlist and get early access when we launch on the Solana dApp Store.</p>
+    <form style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;max-width:460px;margin:0 auto"
+          onsubmit="handleWaitlist(event)">
+      <input
+        type="email"
+        placeholder="your@email.com"
+        required
+        style="flex:1;min-width:200px;padding:12px 16px;border-radius:10px;border:1px solid #333;background:#1A1A1A;color:white;font-size:15px;"
+      />
+      <button type="submit" class="btn-primary" style="padding:12px 28px;font-size:15px;">
+        Join Waitlist
+      </button>
+    </form>
+    <p id="waitlist-msg" style="margin-top:16px;color:#14F195;display:none;">✓ You're on the list! We'll be in touch.</p>
+  </section>
+
+  <footer>
+    <p>© 2026 Käte · Built in Almaty, Kazakhstan 🇰🇿</p>
+    <div class="footer-links">
+      <a href="https://github.com/Jasekeee/kate-app" target="_blank">GitHub</a>
+      <a href="https://twitter.com" target="_blank">Twitter</a>
+      <a href="https://superteam.fun/kz" target="_blank">Superteam KZ</a>
+    </div>
+  </footer>
+
+  <script>
+    function handleWaitlist(e) {
+      e.preventDefault();
+      document.getElementById('waitlist-msg').style.display = 'block';
+      e.target.reset();
+    }
+  </script>
+
+</body>
+</html>
